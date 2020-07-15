@@ -73,8 +73,10 @@ public class internApp extends DialogflowApp {
 
 
 	}
-	//서류마음이 이미지 url
+	//서류마음이 이미지 url1
 	String MaumImageUrl = "https://mblogthumb-phinf.pstatic.net/MjAxOTExMThfMjAy/MDAxNTc0MDU0MDU3MzI3.pSSabICxa-7KDC8e0Kbe1zsPRGrT14qiuvjwKtBsAjkg.5xUHN3AwhVFYSUDY6SAq2gfVHCBPA1T7dGZAMFJBi7Yg.GIF.gbdc04/2.gif?type=w800";
+	//서류마음이 이미지 url2
+	String MaumQImageUrl = "https://mblogthumb-phinf.pstatic.net/MjAxOTExMThfODMg/MDAxNTc0MDU1MTE2NzU3.HSMUvYeZLKHjSoBIXutV6aNGjLECFVYgZxiKQG7OLhUg.J3pu0ztBk1yqgGOmMiDpTJUxbcvjLwY-83DAIbFwGrcg.GIF.gbdc04/emot_011_x3.gif?type=w800";
 	@ForIntent("Default Welcome Intent")
 	public ActionResponse defaultWelcome(ActionRequest request) throws ExecutionException, InterruptedException {
 		ResponseBuilder rb = getResponseBuilder(request);
@@ -136,7 +138,7 @@ public class internApp extends DialogflowApp {
 									//서류마음이 이미지 추가
 									.setImage(
 											new Image()
-													.setUrl(MaumImageUrl)
+													.setUrl(MaumQImageUrl)
 													.setAccessibilityText("서류마음이")));
 			return responseBuilder.build();
 		}
