@@ -14,6 +14,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.o2o.action.server.util.CommonUtil;
 //import com.sun.org.apache.xpath.internal.operations.String;
+import sun.java2d.pipe.SpanShapeRenderer;
 import sun.rmi.runtime.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -127,12 +128,15 @@ public class internApp extends DialogflowApp {
 		// 받아온 정보의 에러코드 확인
 		String errorCode = jsonobj.get("results").getAsJsonObject().get("common").getAsJsonObject().get("errorCode").getAsString();
 		String errorMessage = jsonobj.get("results").getAsJsonObject().get("common").getAsJsonObject().get("errorMessage").getAsString();
-		// 에러코드가 정상이 아니면 에러 메시지 출력 후 해당 인텐트 종료
+		// 에러코드가 정상이 아니면 에러 메시지 출력
 		if(!errorCode.equals("0"))
 		{
 			responseBuilder
 					//에러 메시지 출력
-					.add(errorMessage)
+					.add("<speak>\n" +
+							"  <audio src=\"https://actions.o2o.kr/devsvr3/Image/Response_API_Error.mp3\">\n" +
+							"  <desc>"+errorMessage+"</desc>\n</audio>\n" +
+							"</speak>")
 					.add(
 							new BasicCard()
 									//서류마음이 이미지 추가
@@ -149,12 +153,28 @@ public class internApp extends DialogflowApp {
 			//주소를 받아올때마다 ItemList 초기화
 			ItemList = new ArrayList<>();
 			String Spagenumber = jsonobj.get("results").getAsJsonObject().get("common").getAsJsonObject().get("totalCount").getAsString();
+			//받아온 결과주소가 0개면 메시지 출력
+			if(Integer.parseInt(Spagenumber)==0) {
+				responseBuilder
+						.add("<speak>\n" +
+								"  <audio src=\"https://actions.o2o.kr/devsvr3/Image/Response_NoResult.mp3\">\n" +
+								"  <desc>검색 결과가 없습니다. 다시 입력해 주세요.</desc>\n</audio>\n" +
+								"</speak>")
+				.add(
+						new BasicCard()
+								//서류마음이 이미지 추가
+								.setImage(
+										new Image()
+												.setUrl(MaumQImageUrl)
+												.setAccessibilityText("서류마음이")));
+				return responseBuilder.build();
+			}
+
 			//받아온 결과주소가 1개면 베이직카드로 출력 후 해당 인텐트 종료
 			if(Integer.parseInt(Spagenumber)==1)
 			{
 				JsonObject obj = (JsonObject) jsone.getAsJsonArray().get(0);
 				responseBuilder
-						.add("검색 결과입니다.")
 						.add(
 								new BasicCard()
 										//서류마음이 이미지 추가
@@ -187,9 +207,13 @@ public class internApp extends DialogflowApp {
 				AdressList.add(Item);
 				ItemList.add(Item);
 			}
+
 			//리스트 리턴
 			responseBuilder
-					.add("원하시는 도로명 주소를 선택해 주세요.")
+					.add("<speak>\n" +
+							"  <audio src=\"https://actions.o2o.kr/devsvr3/Image/Response_ListSelect.mp3\">\n" +
+							"  <desc>원하시는 도로명 주소를 선택해 주세요.</desc>\n</audio>\n" +
+							"</speak>")
 					.add(
 							new SelectionList()
 									.setTitle("도로명 주소 리스트")
@@ -207,7 +231,7 @@ public class internApp extends DialogflowApp {
 			ListSelectListItem item  = ItemList.get(ItemIndex);
 			//선택된 정보는 베이직카드로 리턴
 			responseBuilder
-					.add("검색 결과입니다.")
+					.add(new SimpleResponse().setTextToSpeech(item.getTitle()).setDisplayText(""))
 					.add(
 							new BasicCard()
 									//서류마음이 이미지 추가
